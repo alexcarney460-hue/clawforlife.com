@@ -1,14 +1,36 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import CartProvider from "@/components/CartProvider";
 
 export const metadata: Metadata = {
-  title: "OpenClaw | AI-Powered Phone",
+  title: "OpenClaw Phones | AI-Powered Samsung Galaxy A16 5G",
   description:
-    "Samsung phones preloaded with OpenClaw autonomous agent system. Your personal AI army, out of the box.",
+    "Samsung Galaxy A16 5G preloaded with OpenClaw autonomous agent system. 51 agent skills. Your personal AI army, out of the box.",
   openGraph: {
-    title: "OpenClaw | AI-Powered Phone",
-    description: "Samsung phones preloaded with OpenClaw. $225 phone or $1,299 full agent package.",
+    title: "OpenClaw Phones | AI-Powered Samsung Galaxy A16 5G",
+    description:
+      "Samsung phones preloaded with OpenClaw. 51 agent skills. $225 phone or $1,299 full agent package.",
     type: "website",
+    url: "https://clawforlife.com",
+    siteName: "OpenClaw Phones",
+    images: [
+      {
+        url: "https://clawforlife.com/logo.png",
+        width: 512,
+        height: 512,
+        alt: "OpenClaw Phones",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OpenClaw Phones | AI-Powered Samsung Galaxy A16 5G",
+    description: "51 autonomous agent skills. Your AI army, in your pocket.",
+    images: ["https://clawforlife.com/logo.png"],
+  },
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
   },
 };
 
@@ -21,7 +43,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="scanline">{children}</body>
+      <body className="scanline">
+        <CartProvider>{children}</CartProvider>
+      </body>
     </html>
   );
 }

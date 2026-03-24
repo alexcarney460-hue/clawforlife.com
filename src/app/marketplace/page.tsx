@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useCart } from "@/components/CartProvider";
 
 type Category =
   | "all"
@@ -108,29 +109,22 @@ const categories: { key: Category; label: string }[] = [
 
 export default function MarketplacePage() {
   const [active, setActive] = useState<Category>("all");
-  const [cart, setCart] = useState<string[]>([]);
+  const { items, addItem, removeItem } = useCart();
 
   const filtered = active === "all" ? skills : skills.filter((s) => s.category === active);
 
-  const toggleCart = (name: string) => {
-    setCart((prev) =>
-      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
-    );
+  const skillIds = items.filter((i) => i.type === "skill").map((i) => i.id);
+
+  const toggleSkill = (name: string) => {
+    const id = `skill-${name}`;
+    if (skillIds.includes(id)) {
+      removeItem(id);
+    } else {
+      addItem({ id, name, price: 4900, type: "skill" });
+    }
   };
 
-  const handleCheckout = async () => {
-    const res = await fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tier: "skills",
-        skills: cart,
-        quantity: cart.length,
-      }),
-    });
-    const { url } = await res.json();
-    if (url) window.location.href = url;
-  };
+  const cartSkillCount = items.filter((i) => i.type === "skill").length;
 
   return (
     <main className="min-h-screen">
@@ -171,7 +165,7 @@ export default function MarketplacePage() {
 
           {/* Cart banner */}
           <AnimatePresence>
-            {cart.length > 0 && (
+            {cartSkillCount > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -179,16 +173,16 @@ export default function MarketplacePage() {
                 className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#121215] border border-[#D42B2B]/30 rounded-2xl px-6 py-4 flex items-center gap-6 shadow-[0_0_40px_rgba(212,43,43,0.2)]"
               >
                 <div className="text-sm">
-                  <span className="text-[#D42B2B] font-bold">{cart.length}</span>
-                  <span className="text-white/50"> skill{cart.length > 1 ? "s" : ""} selected</span>
+                  <span className="text-[#D42B2B] font-bold">{cartSkillCount}</span>
+                  <span className="text-white/50"> skill{cartSkillCount > 1 ? "s" : ""} in cart</span>
                 </div>
-                <div className="text-white font-bold">${cart.length * 49}</div>
-                <button
-                  onClick={handleCheckout}
-                  className="bg-[#D42B2B] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#A51C1C] hover:shadow-[0_0_20px_rgba(212,43,43,0.4)] transition-all cursor-pointer"
+                <div className="text-white font-bold">${cartSkillCount * 49}</div>
+                <a
+                  href="/cart"
+                  className="bg-[#D42B2B] text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-[#A51C1C] hover:shadow-[0_0_20px_rgba(212,43,43,0.4)] transition-all"
                 >
-                  Checkout
-                </button>
+                  View Cart
+                </a>
               </motion.div>
             )}
           </AnimatePresence>
@@ -197,7 +191,7 @@ export default function MarketplacePage() {
           <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             <AnimatePresence mode="popLayout">
               {filtered.map((skill) => {
-                const inCart = cart.includes(skill.name);
+                const inCart = skillIds.includes(`skill-${skill.name}`);
                 return (
                   <motion.div
                     key={skill.name}
@@ -225,7 +219,7 @@ export default function MarketplacePage() {
                     </div>
                     <p className="text-white/40 text-xs leading-relaxed flex-1">{skill.desc}</p>
                     <button
-                      onClick={() => toggleCart(skill.name)}
+                      onClick={() => toggleSkill(skill.name)}
                       className={`mt-4 w-full py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                         inCart
                           ? "bg-[#D42B2B] text-white"

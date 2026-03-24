@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useCart } from "./CartProvider";
 
 interface PricingCardProps {
   tier: "phone" | "package";
@@ -22,21 +23,25 @@ export default function PricingCard({
   features,
   highlight = false,
 }: PricingCardProps) {
-  const [loading, setLoading] = useState(false);
+  const { addItem, items } = useCart();
+  const [added, setAdded] = useState(false);
 
-  const handleCheckout = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId, tier }),
-      });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-    } catch {
-      setLoading(false);
+  const priceInCents = tier === "phone" ? 22500 : 129900;
+  const alreadyInCart = items.some((i) => i.id === tier);
+
+  const handleAdd = () => {
+    if (alreadyInCart) {
+      window.location.href = "/cart";
+      return;
     }
+    addItem({
+      id: tier,
+      name: tier === "phone" ? "OpenClaw Phone — Samsung Galaxy A16 5G" : "OpenClaw Full Agent Package",
+      price: priceInCents,
+      type: tier,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -74,15 +79,18 @@ export default function PricingCard({
         </ul>
 
         <button
-          onClick={handleCheckout}
-          disabled={loading}
+          onClick={handleAdd}
           className={`mt-8 w-full py-4 rounded-xl font-semibold text-sm uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-            highlight
+            added
+              ? "bg-green-600 text-white"
+              : alreadyInCart
+              ? "bg-white/10 text-[#D42B2B] border border-[#D42B2B]/30"
+              : highlight
               ? "bg-[#D42B2B] text-white hover:bg-[#A51C1C] hover:shadow-[0_0_30px_rgba(212,43,43,0.3)]"
               : "bg-white/5 text-white border border-white/10 hover:border-[#D42B2B]/50 hover:text-[#D42B2B]"
-          } disabled:opacity-50`}
+          }`}
         >
-          {loading ? "Processing..." : "Order Now"}
+          {added ? "✓ Added to Cart" : alreadyInCart ? "View Cart" : "Add to Cart"}
         </button>
       </div>
     </motion.div>

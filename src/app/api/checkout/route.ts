@@ -10,99 +10,121 @@ function getStripe() {
   });
 }
 
-const PRODUCTS: Record<
-  string,
-  { name: string; price: number; description: string; image?: string }
-> = {
-  phone: {
-    name: "OpenClaw Phone — Samsung Galaxy A16 5G",
-    price: 22500,
-    description:
-      "Brand new Samsung Galaxy A16 5G (Unlocked) with OpenClaw terminal pre-installed. Base agent runtime ready.",
-    image: "https://clawforlife.com/samsung-a16-samsung.jpg",
-  },
-  package: {
-    name: "OpenClaw Full Agent Package",
-    price: 129900,
-    description:
-      "Samsung Galaxy A16 5G + 5 marketplace skills of your choice, configured & tested. Includes 90-min onboarding + 30 days priority support.",
-    image: "https://clawforlife.com/hero-phone.png",
-  },
-};
+interface CartItemInput {
+  id: string;
+  name: string;
+  price: number;
+  type: string;
+  quantity: number;
+}
+
+interface ShippingInput {
+  name: string;
+  email: string;
+  phone: string;
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  zip: string;
+}
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { tier, skills } = body;
+    const { tier, items, shipping } = body as {
+      tier: string;
+      items?: CartItemInput[];
+      shipping?: ShippingInput;
+    };
 
     const stripe = getStripe();
 
-    // Skills a la carte purchase
-    if (tier === "skills" && Array.isArray(skills) && skills.length > 0) {
-      const session = await stripe.checkout.sessions.create({
+    // Full cart checkout
+    if (tier === "cart" && Array.isArray(items) && items.length > 0 && shipping) {
+      const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((item) => ({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: item.name,
+            ...(item.type === "phone"
+              ? { images: ["https://clawforlife.com/samsung-a16-samsung.jpg"] }
+              : item.type === "package"
+              ? { images: ["https://clawforlife.com/hero-phone.png"] }
+              : {}),
+          },
+          unit_amount: item.price,
+        },
+        quantity: item.quantity,
+      }));
+
+      const needsShipping = items.some((i) => i.type === "phone" || i.type === "package");
+
+      const skillNames = items
+        .filter((i) => i.type === "skill")
+        .map((i) => i.name)
+        .join(" | ");
+
+      const itemSummary = items.map((i) => `${i.name} x${i.quantity}`).join(", ");
+
+      const sessionParams: Stripe.Checkout.SessionCreateParams = {
         mode: "payment",
         payment_method_types: ["card"],
         customer_creation: "always",
-        line_items: skills.map((skillName: string) => ({
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: `OpenClaw Skill: ${skillName}`,
-              description: `Agent skill — pre-configured and installed on your OpenClaw device`,
-            },
-            unit_amount: 4900,
-          },
-          quantity: 1,
-        })),
-        phone_number_collection: { enabled: true },
-        success_url: `${req.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}&type=skills`,
-        cancel_url: `${req.nextUrl.origin}/marketplace`,
+        customer_email: shipping.email,
+        line_items: lineItems,
+        allow_promotion_codes: true,
+        success_url: `${req.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}&type=cart`,
+        cancel_url: `${req.nextUrl.origin}/cart`,
         metadata: {
-          tier: "skills",
-          skill_count: String(skills.length),
-          skills: skills.join(" | "),
+          tier: "cart",
+          items: itemSummary.slice(0, 500),
+          skills: skillNames.slice(0, 500),
+          customer_name: shipping.name,
+          customer_phone: shipping.phone,
         },
-      });
+      };
+
+      // Pre-fill shipping if physical product
+      if (needsShipping) {
+        sessionParams.shipping_options = [
+          {
+            shipping_rate_data: {
+              type: "fixed_amount",
+              fixed_amount: { amount: 0, currency: "usd" },
+              display_name: "Free Shipping",
+              delivery_estimate: {
+                minimum: { unit: "business_day", value: 2 },
+                maximum: { unit: "business_day", value: 5 },
+              },
+            },
+          },
+        ];
+        // Pass shipping address to Stripe
+        sessionParams.payment_intent_data = {
+          shipping: {
+            name: shipping.name,
+            phone: shipping.phone,
+            address: {
+              line1: shipping.line1,
+              line2: shipping.line2 || undefined,
+              city: shipping.city,
+              state: shipping.state,
+              postal_code: shipping.zip,
+              country: "US",
+            },
+          },
+        };
+      }
+
+      const session = await stripe.checkout.sessions.create(sessionParams);
       return NextResponse.json({ url: session.url });
     }
 
-    // Standard product purchase
-    const product = PRODUCTS[tier];
-    if (!product) {
-      return NextResponse.json({ error: "Invalid product" }, { status: 400 });
-    }
-
-    const lineItem: Stripe.Checkout.SessionCreateParams.LineItem = {
-      price_data: {
-        currency: "usd",
-        product_data: {
-          name: product.name,
-          description: product.description,
-          ...(product.image ? { images: [product.image] } : {}),
-        },
-        unit_amount: product.price,
-      },
-      quantity: 1,
-    };
-
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      customer_creation: "always",
-      line_items: [lineItem],
-      shipping_address_collection: {
-        allowed_countries: ["US"],
-      },
-      phone_number_collection: { enabled: true },
-      allow_promotion_codes: true,
-      success_url: `${req.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}&type=${tier}`,
-      cancel_url: `${req.nextUrl.origin}/#pricing`,
-      metadata: { tier },
-    });
-
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   } catch (err) {
     console.error("Checkout error:", err);
-    return NextResponse.json({ error: "Checkout failed" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Checkout failed";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

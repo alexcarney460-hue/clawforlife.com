@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import CartIcon from "./CartIcon";
 
 export default function Navbar() {
   return (
@@ -19,7 +20,7 @@ export default function Navbar() {
             The Phone
           </a>
           <a href="/marketplace" className="hover:text-[#D42B2B] transition-colors">
-            Skills Marketplace
+            Skills
           </a>
           <a href="/#pricing" className="hover:text-[#D42B2B] transition-colors">
             Pricing
@@ -29,12 +30,15 @@ export default function Navbar() {
           </a>
         </div>
 
-        <a
-          href="/#pricing"
-          className="bg-[#D42B2B] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#A51C1C] hover:shadow-[0_0_20px_rgba(212,43,43,0.4)] transition-all duration-300"
-        >
-          Buy Now
-        </a>
+        <div className="flex items-center gap-5">
+          <CartIcon />
+          <a
+            href="/#pricing"
+            className="bg-[#D42B2B] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#A51C1C] hover:shadow-[0_0_20px_rgba(212,43,43,0.4)] transition-all duration-300"
+          >
+            Buy Now
+          </a>
+        </div>
       </div>
     </motion.nav>
   );
