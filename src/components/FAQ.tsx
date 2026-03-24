@@ -37,21 +37,21 @@ export default function FAQ() {
     <section id="faq" className="py-24 px-6">
       <div className="max-w-2xl mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12">
-          Frequently <span className="text-[#00ff88]">Asked</span>
+          Frequently <span className="text-[#D42B2B]">Asked</span>
         </h2>
 
         <div className="space-y-3">
           {faqs.map((faq, i) => (
             <div
               key={i}
-              className="border border-white/5 rounded-xl overflow-hidden bg-[#12121a]"
+              className="border border-white/5 rounded-xl overflow-hidden bg-[#121215]"
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center justify-between p-5 text-left text-white/80 hover:text-white transition-colors"
               >
                 <span className="text-sm font-medium">{faq.q}</span>
-                <span className="text-[#00ff88] text-lg ml-4">{open === i ? "−" : "+"}</span>
+                <span className="text-[#D42B2B] text-lg ml-4">{open === i ? "−" : "+"}</span>
               </button>
               <AnimatePresence>
                 {open === i && (

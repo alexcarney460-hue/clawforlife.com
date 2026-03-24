@@ -45,7 +45,7 @@ export default function FeatureGrid() {
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold text-center mb-4"
         >
-          What&apos;s Inside <span className="text-[#00ff88]">the Claw</span>
+          What&apos;s Inside <span className="text-[#D42B2B]">the Claw</span>
         </motion.h2>
         <p className="text-center text-white/40 mb-16 max-w-xl mx-auto">
           Every phone ships with a fully configured autonomous agent system. Not an app — a weapon.
@@ -59,7 +59,7 @@ export default function FeatureGrid() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-[#12121a] border border-white/5 rounded-xl p-6 hover:border-[#00ff88]/20 transition-colors duration-300"
+              className="bg-[#121215] border border-white/5 rounded-xl p-6 hover:border-[#D42B2B]/20 transition-colors duration-300"
             >
               <div className="text-3xl mb-4">{f.icon}</div>
               <h3 className="text-white font-semibold mb-2">{f.title}</h3>

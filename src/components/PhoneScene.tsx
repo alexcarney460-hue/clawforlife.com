@@ -1,21 +1,21 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { RoundedBox, Text, Environment, Float, MeshTransmissionMaterial } from "@react-three/drei";
+import { RoundedBox, Text, Environment, Float } from "@react-three/drei";
 import * as THREE from "three";
 
 function TerminalScreen({ position }: { position: [number, number, number] }) {
   const lines = useMemo(
     () => [
-      { text: "$ openclaw init", color: "#00ff88", y: 0.55 },
-      { text: "[✓] Agent swarm initialized", color: "#00cc6a", y: 0.38 },
-      { text: "[✓] 47 skills loaded", color: "#00cc6a", y: 0.21 },
-      { text: "[✓] MCP servers connected", color: "#00cc6a", y: 0.04 },
-      { text: "[✓] CRM pipeline active", color: "#00cc6a", y: -0.13 },
-      { text: "[✓] Content engine ready", color: "#00cc6a", y: -0.3 },
-      { text: "", color: "#00ff88", y: -0.47 },
-      { text: "  Ready. Your AI army awaits._", color: "#00ff88", y: -0.64 },
+      { text: "$ openclaw init", color: "#D42B2B", y: 0.55 },
+      { text: "[✓] Agent swarm initialized", color: "#FF4444", y: 0.38 },
+      { text: "[✓] 47 skills loaded", color: "#FF4444", y: 0.21 },
+      { text: "[✓] MCP servers connected", color: "#FF4444", y: 0.04 },
+      { text: "[✓] CRM pipeline active", color: "#FF4444", y: -0.13 },
+      { text: "[✓] Content engine ready", color: "#FF4444", y: -0.3 },
+      { text: "", color: "#D42B2B", y: -0.47 },
+      { text: "  Ready. Your AI army awaits._", color: "#D42B2B", y: -0.64 },
     ],
     []
   );
@@ -25,7 +25,7 @@ function TerminalScreen({ position }: { position: [number, number, number] }) {
       {/* Screen background */}
       <mesh position={[0, 0, 0.001]}>
         <planeGeometry args={[1.65, 2.9]} />
-        <meshBasicMaterial color="#080810" />
+        <meshBasicMaterial color="#080808" />
       </mesh>
 
       {/* Terminal lines */}
@@ -37,7 +37,6 @@ function TerminalScreen({ position }: { position: [number, number, number] }) {
           color={line.color}
           anchorX="center"
           anchorY="middle"
-          font="https://fonts.gstatic.com/s/jetbrainsmono/v20/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPVmUsaaDhw.woff2"
           maxWidth={1.5}
         >
           {line.text}
@@ -47,7 +46,7 @@ function TerminalScreen({ position }: { position: [number, number, number] }) {
       {/* Scanline overlay */}
       <mesh position={[0, 0, 0.003]}>
         <planeGeometry args={[1.65, 2.9]} />
-        <meshBasicMaterial color="#00ff88" transparent opacity={0.02} />
+        <meshBasicMaterial color="#D42B2B" transparent opacity={0.02} />
       </mesh>
     </group>
   );
@@ -69,7 +68,7 @@ function PhoneBody() {
         {/* Phone frame */}
         <RoundedBox args={[1.85, 3.4, 0.12]} radius={0.12} smoothness={4}>
           <meshPhysicalMaterial
-            color="#1a1a2e"
+            color="#1a1a1f"
             metalness={0.9}
             roughness={0.15}
             clearcoat={1}
@@ -77,17 +76,19 @@ function PhoneBody() {
           />
         </RoundedBox>
 
-        {/* Screen bezel (slightly smaller) */}
+        {/* Screen bezel */}
         <RoundedBox args={[1.72, 3.1, 0.02]} radius={0.08} smoothness={4} position={[0, 0, 0.06]}>
-          <meshBasicMaterial color="#000008" />
+          <meshBasicMaterial color="#000005" />
         </RoundedBox>
 
         {/* Terminal content on screen */}
-        <TerminalScreen position={[0, 0, 0.075]} />
+        <Suspense fallback={null}>
+          <TerminalScreen position={[0, 0, 0.075]} />
+        </Suspense>
 
-        {/* Neon edge glow */}
+        {/* Red edge glow */}
         <RoundedBox args={[1.88, 3.44, 0.13]} radius={0.13} smoothness={4}>
-          <meshBasicMaterial color="#00ff88" transparent opacity={0.08} wireframe />
+          <meshBasicMaterial color="#D42B2B" transparent opacity={0.08} wireframe />
         </RoundedBox>
 
         {/* Camera bump */}
@@ -103,7 +104,7 @@ function PhoneBody() {
         {/* Side buttons */}
         <mesh position={[0.94, 0.3, 0]}>
           <boxGeometry args={[0.03, 0.3, 0.06]} />
-          <meshPhysicalMaterial color="#1a1a2e" metalness={0.9} roughness={0.2} />
+          <meshPhysicalMaterial color="#1a1a1f" metalness={0.9} roughness={0.2} />
         </mesh>
       </group>
     </Float>
@@ -134,7 +135,7 @@ function Particles() {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.03} color="#00ff88" transparent opacity={0.6} sizeAttenuation />
+      <pointsMaterial size={0.03} color="#D42B2B" transparent opacity={0.6} sizeAttenuation />
     </points>
   );
 }
@@ -146,15 +147,22 @@ export default function PhoneScene() {
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
+        fallback={
+          <div className="w-full h-full flex items-center justify-center">
+            <img src="/logo.png" alt="OpenClaw Phones" className="h-32 w-auto" />
+          </div>
+        }
       >
         <ambientLight intensity={0.3} />
         <directionalLight position={[5, 5, 5]} intensity={1} color="#ffffff" />
-        <directionalLight position={[-3, 2, -3]} intensity={0.5} color="#00ff88" />
-        <pointLight position={[0, 0, 3]} intensity={0.8} color="#00ff88" distance={8} />
-        <spotLight position={[0, 5, 0]} intensity={0.4} color="#00ff88" angle={0.5} />
-        <PhoneBody />
-        <Particles />
-        <Environment preset="night" />
+        <directionalLight position={[-3, 2, -3]} intensity={0.5} color="#D42B2B" />
+        <pointLight position={[0, 0, 3]} intensity={0.8} color="#D42B2B" distance={8} />
+        <spotLight position={[0, 5, 0]} intensity={0.4} color="#FF4444" angle={0.5} />
+        <Suspense fallback={null}>
+          <PhoneBody />
+          <Particles />
+          <Environment preset="night" />
+        </Suspense>
       </Canvas>
     </div>
   );

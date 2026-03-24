@@ -34,11 +34,11 @@ export default function TerminalDemo() {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="bg-[#0a0a12] border border-[#00ff88]/20 rounded-xl overflow-hidden glow-border"
+          className="bg-[#0a0a0c] border border-[#D42B2B]/20 rounded-xl overflow-hidden glow-border"
         >
           {/* Title bar */}
-          <div className="flex items-center gap-2 px-4 py-3 bg-[#12121a] border-b border-white/5">
-            <div className="w-3 h-3 rounded-full bg-red-500/80" />
+          <div className="flex items-center gap-2 px-4 py-3 bg-[#121215] border-b border-white/5">
+            <div className="w-3 h-3 rounded-full bg-[#D42B2B]/80" />
             <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
             <div className="w-3 h-3 rounded-full bg-green-500/80" />
             <span className="ml-3 text-white/30 text-xs">openclaw — samsung-galaxy</span>
@@ -51,11 +51,11 @@ export default function TerminalDemo() {
                 key={i}
                 className={`${
                   line.text.startsWith("$")
-                    ? "text-[#00ff88]"
+                    ? "text-[#D42B2B]"
                     : line.text.includes("→")
                     ? "text-white/70"
                     : line.text.includes("Revenue")
-                    ? "text-[#00ff88] font-semibold"
+                    ? "text-[#FF4444] font-semibold"
                     : "text-white/40"
                 }`}
               >
