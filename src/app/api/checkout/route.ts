@@ -81,8 +81,9 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    // @ts-expect-error stripe v14 typing
-    const session = await stripe.checkout.sessions.create(params);
+    const session = await stripe.checkout.sessions.create(
+      params as Stripe.Checkout.SessionCreateParams
+    );
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
     console.error("Checkout error:", err);
