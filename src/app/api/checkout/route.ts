@@ -13,27 +13,55 @@ function getStripe() {
 const PRODUCTS: Record<string, { name: string; price: number; description: string }> = {
   phone: {
     name: "OpenClaw Phone — Samsung Galaxy A16 5G",
-    price: 22500, // cents
+    price: 22500,
     description: "Samsung Galaxy A16 5G with OpenClaw pre-installed",
   },
   package: {
     name: "OpenClaw Full Agent Package",
     price: 129900,
     description:
-      "Samsung Galaxy A16 5G + complete CRM, lead gen, content pipeline, SMS outreach, and 1-on-1 onboarding",
+      "Samsung Galaxy A16 5G + 5 skills of your choice from the marketplace + 1-on-1 onboarding",
   },
 };
 
 export async function POST(req: NextRequest) {
   try {
-    const { tier } = await req.json();
-    const product = PRODUCTS[tier];
+    const body = await req.json();
+    const { tier, skills, quantity } = body;
 
+    const stripe = getStripe();
+
+    // Skills a la carte purchase
+    if (tier === "skills" && Array.isArray(skills) && skills.length > 0) {
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: `OpenClaw Skills (${skills.length})`,
+                description: skills.join(", "),
+              },
+              unit_amount: 4900,
+            },
+            quantity: skills.length,
+          },
+        ],
+        success_url: `${req.nextUrl.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.nextUrl.origin}/marketplace`,
+        metadata: { tier: "skills", skills: skills.join("|") },
+      });
+      return NextResponse.json({ url: session.url });
+    }
+
+    // Standard product purchase
+    const product = PRODUCTS[tier];
     if (!product) {
       return NextResponse.json({ error: "Invalid product" }, { status: 400 });
     }
 
-    const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],

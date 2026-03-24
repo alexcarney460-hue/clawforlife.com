@@ -113,6 +113,12 @@ body {
   filter: drop-shadow(0 0 30px rgba(212, 43, 43, 0.4)) drop-shadow(0 0 80px rgba(212, 43, 43, 0.15));
 }
 
+/* Hero phone with faded edges */
+.hero-phone-mask {
+  mask-image: radial-gradient(ellipse 85% 90% at center, black 50%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 90% at center, black 50%, transparent 100%);
+}
+
 /* Section divider glow */
 .glow-divider {
   height: 1px;

@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import PricingCard from "@/components/PricingCard";
@@ -10,61 +9,76 @@ import TerminalDemo from "@/components/TerminalDemo";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 
-const PhoneScene = dynamic(() => import("@/components/PhoneScene"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-[70vh] md:h-[85vh] flex items-center justify-center bg-[#0a0a0c]">
-      <div className="flex flex-col items-center gap-6">
-        <img src="/logo.png" alt="OpenClaw Phones" className="h-32 w-auto animate-pulse logo-glow" />
-        <div className="text-[#D42B2B] font-mono text-sm cursor-blink">Booting OpenClaw</div>
-      </div>
-    </div>
-  ),
-});
-
 export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden">
       <Navbar />
 
-      {/* Hero — 3D phone up top, text below with breathing room */}
-      <section className="relative pt-28 red-glow-bg">
-        <PhoneScene />
+      {/* Hero — real phone photo */}
+      <section className="relative pt-28 pb-16 red-glow-bg overflow-hidden">
+        {/* Background ambient glow */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(212,43,43,0.15)_0%,transparent_70%)]" />
+        </div>
 
-        {/* Hero text — sits BELOW the 3D scene, not overlapping */}
-        <div className="relative z-10 text-center px-6 pb-16 -mt-12 md:-mt-20">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              Your AI Army.
-              <br />
-              <span className="text-[#D42B2B] drop-shadow-[0_0_30px_rgba(212,43,43,0.4)]">
-                In Your Pocket.
-              </span>
-            </h1>
-            <p className="mt-6 text-white/50 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
-              The <span className="text-white/80">Samsung Galaxy A16 5G</span> preloaded with OpenClaw —
-              autonomous agents that scrape leads, create content, send outreach, and run your CRM.
-              Power on. Deploy. Profit.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="#pricing"
-                className="bg-[#D42B2B] text-white font-semibold px-10 py-4 rounded-xl text-sm uppercase tracking-wider hover:bg-[#A51C1C] hover:shadow-[0_0_50px_rgba(212,43,43,0.4)] transition-all duration-300"
-              >
-                Get Yours — $225
-              </a>
-              <a
-                href="#pricing"
-                className="border border-white/10 text-white/70 font-semibold px-10 py-4 rounded-xl text-sm uppercase tracking-wider hover:border-[#D42B2B]/50 hover:text-[#D42B2B] hover:shadow-[0_0_30px_rgba(212,43,43,0.15)] transition-all duration-300"
-              >
-                Full Package — $1,299
-              </a>
-            </div>
-          </motion.div>
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+            {/* Phone image */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="flex-1 flex justify-center"
+            >
+              <div className="relative">
+                <img
+                  src="/hero-phone.png"
+                  alt="Samsung Galaxy A16 5G running OpenClaw"
+                  className="h-[400px] md:h-[550px] lg:h-[600px] w-auto object-contain phone-glow hero-phone-mask"
+                />
+                {/* Red glow behind phone */}
+                <div className="absolute inset-0 -z-10 blur-3xl bg-[radial-gradient(circle,rgba(212,43,43,0.2)_0%,transparent_60%)]" />
+              </div>
+            </motion.div>
+
+            {/* Hero text */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="flex-1 text-center lg:text-left"
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                Your AI Army.
+                <br />
+                <span className="text-[#D42B2B] drop-shadow-[0_0_30px_rgba(212,43,43,0.4)]">
+                  In Your Pocket.
+                </span>
+              </h1>
+              <p className="mt-6 text-white/50 text-base md:text-lg max-w-lg leading-relaxed">
+                The <span className="text-white/80">Samsung Galaxy A16 5G</span> preloaded with
+                OpenClaw — autonomous agents that scrape leads, create content, send outreach,
+                and run your CRM. Power on. Deploy. Profit.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a
+                  href="#pricing"
+                  className="bg-[#D42B2B] text-white font-semibold px-10 py-4 rounded-xl text-sm uppercase tracking-wider hover:bg-[#A51C1C] hover:shadow-[0_0_50px_rgba(212,43,43,0.4)] transition-all duration-300"
+                >
+                  Get Yours — $225
+                </a>
+                <a
+                  href="/marketplace"
+                  className="border border-white/10 text-white/70 font-semibold px-10 py-4 rounded-xl text-sm uppercase tracking-wider hover:border-[#D42B2B]/50 hover:text-[#D42B2B] hover:shadow-[0_0_30px_rgba(212,43,43,0.15)] transition-all duration-300"
+                >
+                  Browse Skills
+                </a>
+              </div>
+              <p className="mt-6 text-white/20 text-xs">
+                51 agent skills available · $49 each or 5 included with Full Package
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -75,9 +89,9 @@ export default function Home() {
       <section className="py-10 relative">
         <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-8 md:gap-16 px-6">
           {[
-            { num: "47+", label: "Agent Skills" },
+            { num: "51", label: "Agent Skills" },
             { num: "1,800+", label: "Leads Scraped" },
-            { num: "5", label: "Active Businesses" },
+            { num: "$49", label: "Per Skill" },
             { num: "24/7", label: "Autonomous" },
           ].map((s, i) => (
             <motion.div
@@ -121,8 +135,11 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
             Choose Your <span className="text-[#D42B2B]">Weapon</span>
           </h2>
-          <p className="text-center text-white/40 mb-16">
+          <p className="text-center text-white/40 mb-6">
             Both options ship with a brand new Samsung Galaxy A16 5G. No subscriptions. No hidden fees.
+          </p>
+          <p className="text-center text-white/30 text-sm mb-16">
+            Or build your own — <a href="/marketplace" className="text-[#D42B2B] hover:underline">browse 51 skills</a> at $49 each.
           </p>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -134,10 +151,10 @@ export default function Home() {
               tagline="Samsung Galaxy A16 5G with OpenClaw installed."
               features={[
                 "Brand new Samsung Galaxy A16 5G (Unlocked)",
-                "6.7\" Super AMOLED, 5,000 mAh battery",
+                '6.7" Super AMOLED, 5,000 mAh battery',
                 "OpenClaw terminal pre-installed",
-                "47+ agent skills loaded",
-                "MCP server configuration",
+                "Base agent runtime configured",
+                "MCP server framework ready",
                 "Setup guide & documentation",
                 "Email support",
               ]}
@@ -147,22 +164,46 @@ export default function Home() {
               name="Full Agent Package"
               price="$1,299"
               priceId="price_package_1299"
-              tagline="Your complete autonomous revenue engine."
+              tagline="Agent + 5 preloaded skills from the marketplace."
               highlight
               features={[
                 "Everything in The Phone, plus:",
+                "Choose 5 skills from the marketplace",
+                "Skills configured & tested for your business",
                 "Complete CRM setup (Supabase-powered)",
-                "Lead scraping pipeline configured",
-                "SMS outreach system ready to send",
-                "Content production pipeline (reels, posts)",
-                "Social media automation (IG, TikTok)",
                 "1-on-1 onboarding session (90 min)",
                 "30 days priority support",
-                "Custom agent skills for your business",
+                "Additional skills available at $49 each",
+                "Free skill updates for life",
               ]}
             />
           </div>
         </div>
+      </section>
+
+      {/* Marketplace CTA */}
+      <section className="py-16 px-6">
+        <div className="glow-divider mb-16" />
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="max-w-3xl mx-auto text-center"
+        >
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            Want Specific <span className="text-[#D42B2B]">Capabilities?</span>
+          </h2>
+          <p className="text-white/40 mb-8 max-w-lg mx-auto text-sm">
+            Browse our full catalog of 51 agent skills. Lead scraping, content creation, CRM,
+            social media, analytics, engineering — pick exactly what you need at $49 per skill.
+          </p>
+          <a
+            href="/marketplace"
+            className="inline-block bg-[#D42B2B] text-white font-semibold px-10 py-4 rounded-xl text-sm uppercase tracking-wider hover:bg-[#A51C1C] hover:shadow-[0_0_50px_rgba(212,43,43,0.4)] transition-all duration-300"
+          >
+            Browse Skills Marketplace
+          </a>
+        </motion.div>
       </section>
 
       {/* CTA */}

@@ -15,22 +15,22 @@ export default function Navbar() {
         </a>
 
         <div className="hidden md:flex items-center gap-8 text-sm text-white/50">
-          <a href="#phone" className="hover:text-[#D42B2B] transition-colors">
+          <a href="/#phone" className="hover:text-[#D42B2B] transition-colors">
             The Phone
           </a>
-          <a href="#features" className="hover:text-[#D42B2B] transition-colors">
-            Features
+          <a href="/marketplace" className="hover:text-[#D42B2B] transition-colors">
+            Skills Marketplace
           </a>
-          <a href="#pricing" className="hover:text-[#D42B2B] transition-colors">
+          <a href="/#pricing" className="hover:text-[#D42B2B] transition-colors">
             Pricing
           </a>
-          <a href="#faq" className="hover:text-[#D42B2B] transition-colors">
+          <a href="/#faq" className="hover:text-[#D42B2B] transition-colors">
             FAQ
           </a>
         </div>
 
         <a
-          href="#pricing"
+          href="/#pricing"
           className="bg-[#D42B2B] text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-[#A51C1C] hover:shadow-[0_0_20px_rgba(212,43,43,0.4)] transition-all duration-300"
         >
           Buy Now
