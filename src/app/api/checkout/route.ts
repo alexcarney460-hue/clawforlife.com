@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-function getStripe() {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("STRIPE_SECRET_KEY not configured");
-  }
-  return new Stripe(process.env.STRIPE_SECRET_KEY);
-}
-
 interface CartItemInput {
   id: string;
   name: string;
@@ -29,6 +22,14 @@ interface ShippingInput {
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: "Stripe not configured" }, { status: 500 });
+    }
+
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16",
+    });
+
     const body = await req.json();
     const { tier, items, shipping } = body as {
       tier: string;
@@ -36,15 +37,13 @@ export async function POST(req: NextRequest) {
       shipping?: ShippingInput;
     };
 
-    const stripe = getStripe();
-
     if (tier !== "cart" || !Array.isArray(items) || items.length === 0 || !shipping) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map((item) => ({
+    const lineItems = items.map((item) => ({
       price_data: {
-        currency: "usd",
+        currency: "usd" as const,
         product_data: {
           name: item.name,
         },
@@ -57,7 +56,7 @@ export async function POST(req: NextRequest) {
     const skillNames = items.filter((i) => i.type === "skill").map((i) => i.name).join(" | ");
     const itemSummary = items.map((i) => `${i.name} x${i.quantity}`).join(", ");
 
-    const sessionConfig: Stripe.Checkout.SessionCreateParams = {
+    const params: Record<string, unknown> = {
       mode: "payment",
       line_items: lineItems,
       customer_email: shipping.email,
@@ -70,21 +69,20 @@ export async function POST(req: NextRequest) {
         skills: skillNames.slice(0, 500),
         customer_name: shipping.name,
         customer_phone: shipping.phone,
-        shipping_line1: shipping.line1,
-        shipping_line2: shipping.line2 || "",
-        shipping_city: shipping.city,
-        shipping_state: shipping.state,
-        shipping_zip: shipping.zip,
+        shipping_address: needsShipping
+          ? `${shipping.line1}, ${shipping.city}, ${shipping.state} ${shipping.zip}`
+          : "",
       },
     };
 
     if (needsShipping) {
-      sessionConfig.shipping_address_collection = {
+      params.shipping_address_collection = {
         allowed_countries: ["US"],
       };
     }
 
-    const session = await stripe.checkout.sessions.create(sessionConfig);
+    // @ts-expect-error stripe v14 typing
+    const session = await stripe.checkout.sessions.create(params);
     return NextResponse.json({ url: session.url });
   } catch (err: unknown) {
     console.error("Checkout error:", err);
