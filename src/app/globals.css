@@ -3,7 +3,7 @@
 @theme {
   --color-brand: #D42B2B;
   --color-brand-dark: #A51C1C;
-  --color-brand-glow: rgba(212, 43, 43, 0.3);
+  --color-brand-glow: rgba(212, 43, 43, 0.35);
   --color-brand-light: #FF4444;
   --color-dark-900: #0a0a0c;
   --color-dark-800: #121215;
@@ -40,8 +40,8 @@ body {
 }
 
 @keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 20px var(--color-brand-glow), 0 0 60px rgba(212, 43, 43, 0.1); }
-  50% { box-shadow: 0 0 40px var(--color-brand-glow), 0 0 100px rgba(212, 43, 43, 0.2); }
+  0%, 100% { box-shadow: 0 0 20px var(--color-brand-glow), 0 0 60px rgba(212, 43, 43, 0.15); }
+  50% { box-shadow: 0 0 50px var(--color-brand-glow), 0 0 120px rgba(212, 43, 43, 0.25); }
 }
 
 .glow-border {
@@ -73,7 +73,50 @@ body {
   animation: scanline 8s linear infinite;
   pointer-events: none;
   z-index: 100;
-  opacity: 0.3;
+  opacity: 0.4;
+}
+
+/* Red ambient glow spots */
+.red-glow-bg {
+  position: relative;
+}
+.red-glow-bg::before {
+  content: "";
+  position: absolute;
+  top: 20%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(212, 43, 43, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.red-glow-bg::after {
+  content: "";
+  position: absolute;
+  bottom: 10%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(212, 43, 43, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Logo glow */
+.logo-glow {
+  filter: drop-shadow(0 0 20px rgba(212, 43, 43, 0.5)) drop-shadow(0 0 60px rgba(212, 43, 43, 0.25));
+}
+
+/* Phone image glow */
+.phone-glow {
+  filter: drop-shadow(0 0 30px rgba(212, 43, 43, 0.4)) drop-shadow(0 0 80px rgba(212, 43, 43, 0.15));
+}
+
+/* Section divider glow */
+.glow-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(212, 43, 43, 0.4), transparent);
 }
 
 /* Scrollbar */
