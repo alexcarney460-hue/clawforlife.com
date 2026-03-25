@@ -72,25 +72,34 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // 2. Create profile row
-    // Note: The DB trigger should auto-set role to 'admin' for gardenablaze@gmail.com.
-    // We set 'customer' as the default here; the trigger overrides if applicable.
-    const profileInsert: ProfileInsert = {
-      id: authData.user.id,
-      email: normalizedEmail,
-      full_name,
-      phone: phone ?? null,
-      role: 'customer',
-    };
-
+    // 2. Update profile row created by DB trigger with full_name and phone
+    // The trigger on auth.users INSERT already creates the profile row,
+    // so we just update it with the additional fields.
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .insert(profileInsert)
+      .update({
+        full_name,
+        phone: phone ?? null,
+      })
+      .eq('id', authData.user.id)
       .select()
       .single();
 
     if (profileError) {
-      // If profile creation fails, clean up the auth user
+      // Fallback: try to read the profile the trigger created
+      const { data: fallbackProfile } = await supabase
+        .from('profiles')
+        .select()
+        .eq('id', authData.user.id)
+        .single();
+
+      if (fallbackProfile) {
+        return NextResponse.json(
+          { user: fallbackProfile as Profile },
+          { status: 201 }
+        );
+      }
+
       await supabase.auth.admin.deleteUser(authData.user.id);
       return NextResponse.json(
         { error: 'Failed to create user profile.' },
