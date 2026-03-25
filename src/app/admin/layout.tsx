@@ -1,67 +1,49 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/admin/Sidebar';
+import { useEffect, useState } from "react";
+import Sidebar from "@/components/admin/Sidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const [authorized, setAuthorized] = useState(false);
-  const [checking, setChecking] = useState(true);
+  const [ok, setOk] = useState(false);
 
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const token = localStorage.getItem('access_token');
-        if (!token) {
-          router.replace('/login');
-          return;
-        }
-        const res = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) {
-          localStorage.removeItem('access_token');
-          router.replace('/login');
-          return;
-        }
-        const data = await res.json();
-        if (data.user?.role !== 'admin') {
-          router.replace('/login');
-          return;
-        }
-        setAuthorized(true);
-      } catch {
-        router.replace('/login');
-      } finally {
-        setChecking(false);
-      }
+    const token = localStorage.getItem("clawforlife_token");
+    if (!token) {
+      window.location.href = "/login";
+      return;
     }
-    checkAuth();
-  }, [router]);
 
-  if (checking) {
+    fetch("/api/auth/me", { headers: { Authorization: "Bearer " + token } })
+      .then(r => {
+        if (!r.ok) throw new Error("unauthorized");
+        return r.json();
+      })
+      .then(data => {
+        if (data.user?.role === "admin") {
+          setOk(true);
+        } else {
+          window.location.href = "/login";
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem("clawforlife_token");
+        window.location.href = "/login";
+      });
+  }, []);
+
+  if (!ok) {
     return (
-      <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-brand/30 border-t-brand rounded-full animate-spin" />
-          <p className="text-xs text-white/30 tracking-wider uppercase">Verifying access</p>
-        </div>
+      <div style={{ minHeight: "100vh", background: "#0a0a0c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>Verifying access...</p>
       </div>
     );
   }
 
-  if (!authorized) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen bg-[#0a0a0c]">
+    <div style={{ minHeight: "100vh", background: "#0a0a0c" }}>
       <Sidebar />
-      <main className="ml-64 min-h-screen">
-        <div className="p-8">
-          {children}
-        </div>
+      <main style={{ marginLeft: 256, minHeight: "100vh", padding: 32 }}>
+        {children}
       </main>
     </div>
   );

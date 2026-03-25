@@ -1,137 +1,62 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<"login" | "register">("login");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    try {
-      const endpoint = mode === "login" ? "/api/auth/login" : "/api/auth/register";
-      const body = mode === "login"
-        ? { email, password }
-        : { email, password, full_name: email.split("@")[0] };
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+    const data = await res.json();
+    setLoading(false);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Something went wrong");
-        return;
-      }
-
-      if (data.session?.access_token) {
-        localStorage.setItem("access_token", data.session.access_token);
-        localStorage.setItem("refresh_token", data.session.refresh_token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      if (data.user?.role === "admin") {
-        window.location.href = "/admin";
-      } else {
-        window.location.href = "/";
-      }
-    } catch {
-      setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      setError(data.error || "Login failed");
+      return;
     }
+
+    localStorage.setItem("clawforlife_token", data.session.access_token);
+    localStorage.setItem("clawforlife_user", JSON.stringify(data.user));
+    window.location.href = "/admin";
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm"
-      >
-        <div className="text-center mb-8">
-          <a href="/">
-            <img src="/logo.png" alt="ClawForLife" className="h-16 w-auto mx-auto mb-4 logo-glow" />
-          </a>
-          <h1 className="text-xl font-bold text-white">
-            {mode === "login" ? "Sign In" : "Create Account"}
-          </h1>
-          <p className="text-white/30 text-sm mt-1">
-            {mode === "login" ? "Access your ClawForLife dashboard" : "Get started with ClawForLife"}
-          </p>
+    <div style={{ minHeight: "100vh", background: "#0a0a0c", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ width: 360, padding: 32 }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <img src="/logo.png" alt="ClawForLife" style={{ height: 64, margin: "0 auto 16px" }} />
+          <h1 style={{ color: "#fff", fontSize: 20, fontWeight: 700 }}>Sign In</h1>
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs text-white/40 mb-1 uppercase tracking-wider">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full bg-[#121215] border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D42B2B]/50 transition-colors"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs text-white/40 mb-1 uppercase tracking-wider">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="w-full bg-[#121215] border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-[#D42B2B]/50 transition-colors"
-              placeholder="8+ characters"
-            />
-          </div>
-
-          {error && (
-            <div className="bg-[#D42B2B]/10 border border-[#D42B2B]/30 rounded-lg px-4 py-2 text-sm text-[#FF4444]">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#D42B2B] hover:bg-[#A51C1C] disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition-colors text-sm"
-          >
-            {loading ? "..." : mode === "login" ? "Sign In" : "Create Account"}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email" value={email} onChange={e => setEmail(e.target.value)} required
+            placeholder="Email"
+            style={{ width: "100%", padding: "12px 16px", marginBottom: 12, background: "#121215", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#fff", fontSize: 14, boxSizing: "border-box" }}
+          />
+          <input
+            type="password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8}
+            placeholder="Password"
+            style={{ width: "100%", padding: "12px 16px", marginBottom: 12, background: "#121215", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#fff", fontSize: 14, boxSizing: "border-box" }}
+          />
+          {error && <div style={{ color: "#ff4444", fontSize: 13, marginBottom: 12 }}>{error}</div>}
+          <button type="submit" disabled={loading}
+            style={{ width: "100%", padding: 12, background: "#D42B2B", color: "#fff", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-
-        <p className="text-center text-white/30 text-xs mt-6">
-          {mode === "login" ? (
-            <>
-              No account?{" "}
-              <button onClick={() => { setMode("register"); setError(""); }} className="text-[#D42B2B] hover:underline">
-                Create one
-              </button>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <button onClick={() => { setMode("login"); setError(""); }} className="text-[#D42B2B] hover:underline">
-                Sign in
-              </button>
-            </>
-          )}
-        </p>
-      </motion.div>
+      </div>
     </div>
   );
 }
