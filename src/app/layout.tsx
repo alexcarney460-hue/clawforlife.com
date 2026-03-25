@@ -3,29 +3,29 @@ import "./globals.css";
 import CartProvider from "@/components/CartProvider";
 
 export const metadata: Metadata = {
-  title: "OpenClaw Phones | AI-Powered Samsung Galaxy A16 5G",
+  title: "ClawForLife | AI-Powered Business Phones",
   description:
-    "Samsung Galaxy A16 5G preloaded with OpenClaw autonomous agent system. 51 agent skills. Your personal AI army, out of the box.",
+    "Business phones with built-in AI assistant handling calls, scheduling & customer service 24/7. Samsung Galaxy A16 5G with OpenClaw pre-installed.",
   openGraph: {
-    title: "OpenClaw Phones | AI-Powered Samsung Galaxy A16 5G",
+    title: "ClawForLife — AI-Powered Business Phones",
     description:
-      "Samsung phones preloaded with OpenClaw. 51 agent skills. $225 phone or $1,299 full agent package.",
+      "Business phones with built-in AI assistant handling calls & scheduling 24/7. Your AI receptionist, out of the box.",
     type: "website",
     url: "https://openclaw-store.vercel.app",
-    siteName: "OpenClaw Phones",
+    siteName: "ClawForLife",
     images: [
       {
         url: "https://openclaw-store.vercel.app/logo.png",
         width: 512,
         height: 512,
-        alt: "OpenClaw Phones",
+        alt: "ClawForLife - AI Business Phones",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OpenClaw Phones | AI-Powered Samsung Galaxy A16 5G",
-    description: "51 autonomous agent skills. Your AI army, in your pocket.",
+    title: "ClawForLife | AI-Powered Business Phones",
+    description: "Business phones with built-in AI handling calls & scheduling 24/7.",
     images: ["https://openclaw-store.vercel.app/logo.png"],
   },
   icons: {
