@@ -11,11 +11,11 @@ export const metadata: Metadata = {
     description:
       "Samsung phones preloaded with OpenClaw. 51 agent skills. $225 phone or $1,299 full agent package.",
     type: "website",
-    url: "https://clawforlife.com",
+    url: "https://openclaw-store.vercel.app",
     siteName: "OpenClaw Phones",
     images: [
       {
-        url: "https://clawforlife.com/logo.png",
+        url: "https://openclaw-store.vercel.app/logo.png",
         width: 512,
         height: 512,
         alt: "OpenClaw Phones",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "OpenClaw Phones | AI-Powered Samsung Galaxy A16 5G",
     description: "51 autonomous agent skills. Your AI army, in your pocket.",
-    images: ["https://clawforlife.com/logo.png"],
+    images: ["https://openclaw-store.vercel.app/logo.png"],
   },
   icons: {
     icon: "/logo.png",
