@@ -114,6 +114,61 @@ export default function Home() {
       {/* Glow divider */}
       <div className="glow-divider" />
 
+      {/* Positions this phone replaces */}
+      <section className="py-20 px-6 relative">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold mb-4"
+          >
+            One phone. <span className="text-[#D42B2B]">Seven positions eliminated.</span>
+          </motion.h2>
+          <p className="text-white/40 mb-12 max-w-xl mx-auto">
+            Stop paying $3,000–$8,000/month in salaries. This phone does it all, 24/7, for a one-time cost.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            {[
+              { role: "Receptionist", salary: "$2,800/mo", skill: "Answers calls, books appointments, never misses a lead" },
+              { role: "Social Media Manager", salary: "$4,200/mo", skill: "Creates reels, posts daily, grows your following" },
+              { role: "Lead Gen Specialist", salary: "$3,500/mo", skill: "Scrapes targeted leads, builds prospect lists" },
+              { role: "SMS Outreach Rep", salary: "$3,000/mo", skill: "Sends personalized texts, follows up automatically" },
+              { role: "SEO Specialist", salary: "$4,000/mo", skill: "Optimizes your site, tracks rankings, writes content" },
+              { role: "Customer Service Rep", salary: "$2,500/mo", skill: "Handles inquiries 24/7, never takes a break" },
+              { role: "Marketing Coordinator", salary: "$3,800/mo", skill: "Runs campaigns, analyzes data, A/B tests everything" },
+            ].map((p, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07 }}
+                className="bg-[#121215] border border-white/5 rounded-lg p-4 text-left hover:border-[#D42B2B]/30 transition-colors"
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <span className="text-sm font-semibold text-white/90 line-through decoration-[#D42B2B]">{p.role}</span>
+                  <span className="text-xs text-[#D42B2B] font-mono">{p.salary}</span>
+                </div>
+                <p className="text-xs text-white/40">{p.skill}</p>
+              </motion.div>
+            ))}
+          </div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="mt-8 text-sm text-white/30"
+          >
+            Total replaced: <span className="text-[#D42B2B] font-bold">$23,800/month</span> → <span className="text-white/60 font-bold">$225 once</span>
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Glow divider */}
+      <div className="glow-divider" />
+
       {/* Phone Showcase — real Samsung images + specs */}
       <PhoneShowcase />
 
