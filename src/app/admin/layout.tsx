@@ -12,19 +12,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     async function checkAuth() {
       try {
-        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+          router.replace('/login');
+          return;
+        }
+        const res = await fetch('/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (!res.ok) {
-          router.replace('/');
+          localStorage.removeItem('access_token');
+          router.replace('/login');
           return;
         }
         const data = await res.json();
         if (data.profile?.role !== 'admin') {
-          router.replace('/');
+          router.replace('/login');
           return;
         }
         setAuthorized(true);
       } catch {
-        router.replace('/');
+        router.replace('/login');
       } finally {
         setChecking(false);
       }
