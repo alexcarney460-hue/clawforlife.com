@@ -26,7 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           return;
         }
         const data = await res.json();
-        if (data.profile?.role !== 'admin') {
+        if (data.user?.role !== 'admin') {
           router.replace('/login');
           return;
         }
@@ -42,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-dark-900 flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0c] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-brand/30 border-t-brand rounded-full animate-spin" />
           <p className="text-xs text-white/30 tracking-wider uppercase">Verifying access</p>
@@ -56,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen bg-dark-900">
+    <div className="min-h-screen bg-[#0a0a0c]">
       <Sidebar />
       <main className="ml-64 min-h-screen">
         <div className="p-8">
