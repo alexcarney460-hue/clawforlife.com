@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { syncStripeCheckout } from "@/lib/orders/stripe-sync";
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -99,6 +100,15 @@ export async function POST(req: NextRequest) {
 
       console.log(`[ORDER] ${tier} — ${email} — ${amount} — ${session.id}`);
       await sendTelegram(message);
+
+      // Persist order to Supabase
+      const syncResult = await syncStripeCheckout(session);
+      if (syncResult.success) {
+        console.log(`[ORDER] Persisted as ${syncResult.orderNumber} (skipped=${syncResult.skipped})`);
+      } else {
+        console.error(`[ORDER] Failed to persist: ${syncResult.error}`);
+        // Don't fail the webhook — Telegram already sent, Stripe will retry
+      }
       break;
     }
 

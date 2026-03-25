@@ -1,0 +1,48 @@
+/**
+ * Central type re-exports for the ClawForLife store.
+ * Import from '@/lib/types' everywhere.
+ */
+export type { Database } from './supabase';
+
+export type {
+  Profile,
+  ProfileInsert,
+  ProfileUpdate,
+  Product,
+  ProductInsert,
+  ProductUpdate,
+  Order,
+  OrderInsert,
+  OrderUpdate,
+  OrderItem,
+  OrderItemInsert,
+  Device,
+  DeviceInsert,
+  DeviceUpdate,
+  SkillEntitlement,
+  SkillEntitlementInsert,
+  Shipment,
+  ShipmentInsert,
+  ShipmentUpdate,
+  Lead,
+  LeadInsert,
+  LeadUpdate,
+  ContactHistory,
+  ContactHistoryInsert,
+  AnalyticsEvent,
+  AnalyticsEventInsert,
+  Invoice,
+  InvoiceInsert,
+  InvoiceUpdate,
+  TaxRate,
+  TaxRateInsert,
+  TaxRateUpdate,
+  OrderStatus,
+  ShipmentStatus,
+  LeadStatus,
+  InvoiceStatus,
+  ProductType,
+  UserRole,
+  ContactChannel,
+  ContactDirection,
+} from './supabase';

@@ -1,0 +1,48 @@
+/**
+ * Re-exports from the generated Supabase types plus manual helpers.
+ * Other modules should import from here rather than reaching into supabase.ts directly.
+ */
+export type { Database } from '@/lib/types/supabase';
+
+export type {
+  Profile,
+  ProfileInsert,
+  ProfileUpdate,
+  Product,
+  ProductInsert,
+  ProductUpdate,
+  Order,
+  OrderInsert,
+  OrderUpdate,
+  OrderItem,
+  OrderItemInsert,
+  Device,
+  DeviceInsert,
+  DeviceUpdate,
+  SkillEntitlement,
+  SkillEntitlementInsert,
+  Shipment,
+  ShipmentInsert,
+  ShipmentUpdate,
+  Lead,
+  LeadInsert,
+  LeadUpdate,
+  ContactHistory,
+  ContactHistoryInsert,
+  AnalyticsEvent,
+  AnalyticsEventInsert,
+  Invoice,
+  InvoiceInsert,
+  InvoiceUpdate,
+  TaxRate,
+  TaxRateInsert,
+  TaxRateUpdate,
+  OrderStatus,
+  ShipmentStatus,
+  LeadStatus,
+  InvoiceStatus,
+  ProductType,
+  UserRole,
+  ContactChannel,
+  ContactDirection,
+} from '@/lib/types/supabase';
