@@ -90,7 +90,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-8 md:gap-16 px-6">
           {[
             { num: "51", label: "Agent Skills" },
-            { num: "1,800+", label: "Leads Scraped" },
+            { num: "Zero", label: "Missed Calls" },
             { num: "$49", label: "Per Skill" },
             { num: "24/7", label: "Autonomous" },
           ].map((s, i) => (
