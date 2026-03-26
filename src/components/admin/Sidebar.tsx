@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: '/admin/analytics', label: 'Analytics', icon: AnalyticsIcon },
   { href: '/admin/accounting', label: 'Accounting', icon: AccountingIcon },
   { href: '/admin/shipping', label: 'Shipping', icon: ShippingIcon },
+  { href: '/admin/voice', label: 'AI Voice', icon: VoiceIcon },
 ] as const;
 
 function DashboardIcon({ className }: { className?: string }) {
@@ -57,6 +58,14 @@ function ShippingIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 20 20" fill="currentColor">
       <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
       <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1h3.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-4a1 1 0 00-.293-.707l-3-3A1 1 0 0016 5h-5V4a1 1 0 00-1-1H3zm8 2h4.586L18 8.414V10h-7V6z" />
+    </svg>
+  );
+}
+
+function VoiceIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="currentColor">
+      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
     </svg>
   );
 }
