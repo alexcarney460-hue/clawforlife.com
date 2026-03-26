@@ -1,0 +1,32 @@
+{
+    "businessName": "ClawForLife",
+    "industry": "general",
+    "greeting": "Hello! Thank you for calling ClawForLife. How can I help you today?",
+    "services": [
+        "AI-powered business automation",
+        "Custom AI solutions",
+        "CRM and lead management",
+        "Voice AI systems",
+        "Website and app development"
+    ],
+    "hours": "Monday through Friday, 9 AM to 6 PM Eastern",
+    "faq": [
+        {
+            "question": "What does ClawForLife do?",
+            "answer": "We build AI-powered automation tools that help businesses save time and close more deals. From AI receptionists to smart CRM systems."
+        },
+        {
+            "question": "How much does it cost?",
+            "answer": "Our plans start at 99 dollars with flexible monthly options. We'd love to schedule a quick call with our team to find the right fit for your business."
+        },
+        {
+            "question": "Do you offer a demo?",
+            "answer": "Absolutely! We can schedule a personalized demo to show you exactly how our AI tools can help your specific business."
+        }
+    ],
+    "transferNumber": "",
+    "ownerTelegramId": "6315250293",
+    "anthropicApiKey": "",
+    "supabaseUrl": "https://urhacndintzremgspbcu.supabase.co",
+    "supabaseKey": ""
+}
