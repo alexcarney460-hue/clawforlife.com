@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClawForLife Bridge</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      text-align: center;
+      padding: 32px 0 24px;
+      border-bottom: 1px solid #222;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    header .subtitle {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #111;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex-shrink: 0;
+    }
+
+    .status-dot.offline { background: #ef4444; }
+
+    .section {
+      background: #111;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+
+    .folder-list {
+      list-style: none;
+    }
+
+    .folder-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #1a1a1a;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+    }
+
+    .folder-list li .remove-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 0 4px;
+    }
+
+    .folder-input-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px 12px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3b82f6;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn-success {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: #333;
+      color: #ccc;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+    }
+
+    .toggle-row label {
+      font-size: 14px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+    }
+
+    .toggle input { opacity: 0; width: 0; height: 0; }
+
+    .toggle .slider {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #333;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle .slider::before {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      left: 3px; bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked + .slider { background: #3b82f6; }
+    .toggle input:checked + .slider::before { transform: translateX(20px); }
+
+    .token-display {
+      background: #1a1a1a;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 12px;
+      word-break: break-all;
+      color: #888;
+      margin-top: 8px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .token-display:hover { color: #fff; }
+    .token-display::after {
+      content: 'click to copy';
+      position: absolute;
+      right: 12px;
+      top: 10px;
+      font-size: 11px;
+      color: #555;
+    }
+
+    .quick-paths {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .quick-paths button {
+      padding: 6px 12px;
+      font-size: 12px;
+      background: #222;
+      color: #aaa;
+      border-radius: 4px;
+    }
+
+    .log {
+      background: #0a0a0a;
+      border: 1px solid #222;
+      border-radius: 6px;
+      padding: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      font-size: 12px;
+      color: #888;
+      margin-top: 12px;
+    }
+
+    .log .entry { margin-bottom: 4px; }
+    .log .entry.add { color: #22c55e; }
+    .log .entry.change { color: #f59e0b; }
+    .log .entry.unlink { color: #ef4444; }
+
+    .empty { color: #555; font-style: italic; font-size: 13px; }
+
+    .instructions {
+      background: #0f172a;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .instructions code {
+      background: #1a1a2e;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'SF Mono', 'Consolas', monospace;
+      color: #60a5fa;
+    }
+
+    .instructions ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ClawForLife Bridge</h1>
+      <div class="subtitle">PC &harr; Phone File Access</div>
+    </header>
+
+    <div class="status-bar" id="status-bar">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Connecting...</span>
+    </div>
+
+    <div class="instructions" id="setup-instructions" style="display:none;">
+      <strong>Setup Steps:</strong>
+      <ol>
+        <li>Add folders below that contain your business files</li>
+        <li>Connect your OpenClaw phone via USB</li>
+        <li>On the PC, run: <code>adb reverse tcp:18800 tcp:18800</code></li>
+        <li>On the phone (Termux): <code>node pair.js</code> then <code>node sync.js</code></li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2>Shared Folders</h2>
+      <ul class="folder-list" id="folder-list">
+        <li class="empty">No folders shared yet</li>
+      </ul>
+      <div class="folder-input-row">
+        <input type="text" id="folder-input" placeholder="C:\Users\You\Documents">
+        <button class="btn-primary" onclick="addFolder()">Add</button>
+      </div>
+      <div class="quick-paths" id="quick-paths"></div>
+    </div>
+
+    <div class="section">
+      <h2>Permissions</h2>
+      <div class="toggle-row">
+        <label>Allow phone to write/create files</label>
+        <div class="toggle">
+          <input type="checkbox" id="write-toggle" onchange="toggleWrite()">
+          <span class="slider"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Auth Token</h2>
+      <p style="font-size:13px;color:#888;">The phone uses this token to authenticate. Click to copy.</p>
+      <div class="token-display" id="token-display" onclick="copyToken()">Loading...</div>
+    </div>
+
+    <div class="section">
+      <h2>File Activity</h2>
+      <div class="log" id="activity-log">
+        <div class="entry">Waiting for file changes...</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:24px;">
+      <button class="btn-danger" onclick="resetBridge()" style="font-size:12px;padding:8px 16px;">Reset Bridge</button>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+    let authToken = null;
+    let folders = [];
+
+    async function api(method, path, body) {
+      const opts = {
+        method,
+        headers: { 'Content-Type': 'application/json' }
+      };
+      if (authToken) opts.headers['Authorization'] = `Bearer ${authToken}`;
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(API + path, opts);
+      return res.json();
+    }
+
+    async function loadStatus() {
+      try {
+        const res = await api('GET', '/api/setup/status');
+        if (res.success) {
+          document.getElementById('status-dot').className = 'status-dot';
+          document.getElementById('status-text').textContent = `Bridge running (v${res.data.version})`;
+
+          if (!res.data.setupComplete) {
+            document.getElementById('setup-instructions').style.display = 'block';
+          }
+        }
+      } catch {
+        document.getElementById('status-dot').className = 'status-dot offline';
+        document.getElementById('status-text').textContent = 'Bridge offline';
+      }
+    }
+
+    async function loadToken() {
+      // During setup, get token from pair endpoint
+      const res = await api('POST', '/api/setup/pair');
+      if (res.success) {
+        authToken = res.data.authToken;
+        document.getElementById('token-display').textContent = authToken;
+        loadFullStatus();
+        loadFolders();
+      }
+    }
+
+    async function loadFullStatus() {
+      if (!authToken) return;
+      try {
+        const res = await api('GET', '/api/status');
+        if (res.success) {
+          document.getElementById('write-toggle').checked = res.data.writeEnabled;
+          suggestQuickPaths(res.data.platform);
+        }
+      } catch { /* not paired yet */ }
+    }
+
+    function suggestQuickPaths(platform) {
+      const container = document.getElementById('quick-paths');
+      const home = platform === 'win32' ? 'C:\\Users' : '/Users';
+      const paths = platform === 'win32'
+        ? ['Documents', 'Desktop', 'Downloads']
+        : ['Documents', 'Desktop', 'Downloads'];
+
+      // Try to build suggestions from the home directory
+      const suggestions = paths.map(p => {
+        const full = platform === 'win32'
+          ? `${home}\\${getWinUser()}\\${p}`
+          : `${home}/${getMacUser()}/${p}`;
+        return full;
+      });
+
+      container.innerHTML = '<span style="font-size:11px;color:#555;">Quick add:</span> ' +
+        suggestions.map(s =>
+          `<button onclick="document.getElementById('folder-input').value='${s.replace(/\\/g, '\\\\')}'">
+            ${s.split(/[/\\]/).pop()}
+          </button>`
+        ).join('');
+    }
+
+    function getWinUser() {
+      // Best guess from token hostname or default
+      return document.getElementById('token-display').textContent.length > 0 ? 'User' : 'User';
+    }
+
+    function getMacUser() { return 'user'; }
+
+    async function loadFolders() {
+      if (!authToken) return;
+      try {
+        const res = await api('GET', '/api/files?path=/');
+        if (res.success) {
+          folders = res.data.map(f => f.path);
+          renderFolders();
+        }
+      } catch { /* not set up yet */ }
+    }
+
+    function renderFolders() {
+      const list = document.getElementById('folder-list');
+      if (folders.length === 0) {
+        list.innerHTML = '<li class="empty">No folders shared yet</li>';
+        return;
+      }
+      list.innerHTML = folders.map((f, i) =>
+        `<li>
+          <span>${f}</span>
+          <button class="remove-btn" onclick="removeFolder(${i})">&times;</button>
+        </li>`
+      ).join('');
+    }
+
+    async function addFolder() {
+      const input = document.getElementById('folder-input');
+      const newPath = input.value.trim();
+      if (!newPath) return;
+
+      const newFolders = [...folders, newPath];
+      const res = await api('POST', '/api/setup/folders', { folders: newFolders });
+      if (res.success) {
+        folders = res.data.sharedFolders;
+        renderFolders();
+        input.value = '';
+        if (res.data.errors) {
+          alert('Some paths were invalid:\n' + res.data.errors.join('\n'));
+        }
+      } else {
+        alert('Error: ' + res.error);
+      }
+    }
+
+    async function removeFolder(index) {
+      const newFolders = folders.filter((_, i) => i !== index);
+      const res = await api('POST', '/api/setup/folders', { folders: newFolders });
+      if (res.success) {
+        folders = res.data.sharedFolders;
+        renderFolders();
+      }
+    }
+
+    async function toggleWrite() {
+      const enabled = document.getElementById('write-toggle').checked;
+      await api('POST', '/api/setup/write-access', { enabled });
+    }
+
+    function copyToken() {
+      if (authToken) {
+        navigator.clipboard.writeText(authToken).then(() => {
+          const el = document.getElementById('token-display');
+          el.style.borderColor = '#22c55e';
+          setTimeout(() => { el.style.borderColor = ''; }, 1000);
+        });
+      }
+    }
+
+    async function resetBridge() {
+      if (!confirm('This will unpair the phone and reset all settings. Continue?')) return;
+      const res = await api('POST', '/api/setup/reset');
+      if (res.success) {
+        authToken = res.data.newToken;
+        document.getElementById('token-display').textContent = authToken;
+        folders = [];
+        renderFolders();
+        alert('Bridge reset. Phone must re-pair.');
+      }
+    }
+
+    // SSE file watcher
+    function startWatcher() {
+      if (!authToken) return;
+      const log = document.getElementById('activity-log');
+
+      const evtSource = new EventSource(`/api/files/watch?token=${authToken}`);
+      // Note: SSE doesn't support auth headers natively.
+      // We'll add a query param fallback or just connect without auth for the UI.
+
+      // Actually, use fetch-based SSE since we need auth header
+      fetch('/api/files/watch', {
+        headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'text/event-stream' }
+      }).then(response => {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        function read() {
+          reader.read().then(({ done, value }) => {
+            if (done) return;
+            const text = decoder.decode(value);
+            const lines = text.split('\n');
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const event = JSON.parse(line.slice(6));
+                  if (event.event === 'connected') return;
+                  const div = document.createElement('div');
+                  div.className = `entry ${event.event}`;
+                  const time = new Date(event.timestamp).toLocaleTimeString();
+                  div.textContent = `[${time}] ${event.event}: ${event.name}`;
+                  log.prepend(div);
+                  // Keep log under 50 entries
+                  while (log.children.length > 50) log.removeChild(log.lastChild);
+                } catch {}
+              }
+            }
+            read();
+          });
+        }
+        read();
+      }).catch(() => {});
+    }
+
+    // Init
+    loadStatus();
+    loadToken();
+    setTimeout(startWatcher, 2000);
+    // Refresh status every 30s
+    setInterval(loadStatus, 30000);
+  </script>
+</body>
+</html>

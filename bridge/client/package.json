@@ -1,0 +1,12 @@
+{
+  "name": "@openclaw/bridge-client",
+  "version": "1.0.0",
+  "description": "Phone-side client library for ClawForLife Bridge",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "pair": "node src/pair.js",
+    "sync": "node src/sync.js"
+  },
+  "dependencies": {}
+}
